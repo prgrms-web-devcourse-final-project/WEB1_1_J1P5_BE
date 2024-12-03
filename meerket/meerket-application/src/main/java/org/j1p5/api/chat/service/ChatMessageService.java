@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.j1p5.api.chat.dto.response.ChatMessageResponse;
 import org.j1p5.api.chat.dto.response.ChatSocketMessageResponse;
+import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.chat.entity.ChatMessageEntity;
 import org.j1p5.domain.chat.repository.ChatMessageRepository;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.j1p5.api.chat.exception.ChatException.*;
 
 /**
  * @author yechan
@@ -32,29 +35,33 @@ public class ChatMessageService {
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.create(roomId, senderId, content);
         try {
             return chatMessageRepository.save(chatMessageEntity);
-        } catch (Exception e) { //TODO 추후 커스텀 예외 처리
-            throw new RuntimeException("메시지 저장에 실패했습니다.", e);
+        } catch (Exception e) {
+            throw new WebException(CHAT_SAVE_ERROR);
         }
     }
 
 
     public List<ChatMessageResponse> getChatMessages(ObjectId roomObjectId, Long userId, LocalDateTime beforeTime) {
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("roomId").is(roomObjectId));
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("roomId").is(roomObjectId));
 
-        if (beforeTime != null) {
-            query.addCriteria(Criteria.where("createdAt").lt(beforeTime));
+            if (beforeTime != null) {
+                query.addCriteria(Criteria.where("createdAt").lt(beforeTime));
+            }
+
+            query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
+
+            List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
+            List<ChatMessageResponse> responses = chatMessageEntities.stream()
+                    .map(ChatMessageResponse::fromEntity)
+                    .toList();
+
+            return responses;
+        } catch (Exception e) {
+            throw new WebException(CHAT_READ_ERROR);
         }
-
-        query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
-
-        List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
-        List<ChatMessageResponse> responses = chatMessageEntities.stream()
-                .map(ChatMessageResponse::fromEntity)
-                .toList();
-
-        return responses;
     }
 
 
