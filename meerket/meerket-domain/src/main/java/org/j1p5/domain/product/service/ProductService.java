@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProductService {
 
-    private final UserReader userReader;
+    private final ProductUserReader userReader;
     private final ProductAppender productAppender;
     private final ImageService imageService;
     private final RegionAuthHandler userRegionauth;

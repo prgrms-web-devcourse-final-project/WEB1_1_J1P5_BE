@@ -1,6 +1,7 @@
 package org.j1p5.api.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.global.handler.CustomAccessDeniedHandler;
 import org.j1p5.api.global.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,7 @@ public class SecurityConfig {
                     e.accessDeniedHandler(customAccessDeniedHandler);
                     e.authenticationEntryPoint(customAuthenticationEntryPoint);
                 }
-        )
+        );
 
         http.sessionManagement(
                 session ->
