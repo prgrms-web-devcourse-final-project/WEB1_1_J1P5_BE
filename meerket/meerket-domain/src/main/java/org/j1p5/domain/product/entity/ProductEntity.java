@@ -128,7 +128,7 @@ public class ProductEntity extends BaseEntity {
 
     public void updateExpiredTime(){
 //        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
-        this.expiredTime = LocalDateTime.now().plus(10, ChronoUnit.SECONDS); // 시연을 위한 20초
+        this.expiredTime = LocalDateTime.now().plus(10, ChronoUnit.SECONDS); // 시연을 위한 10초
     }
 
     public void updateWinningPrice(int winningPrice) {
