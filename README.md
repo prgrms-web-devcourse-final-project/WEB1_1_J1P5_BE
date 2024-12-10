@@ -12,7 +12,7 @@ ___
 
 ## 배포 주소
 
-[meerket.vercel.appp](https://meerket.vercel.app/)
+[meerket.vercel.app](https://meerket.vercel.app/)
 
 ## 스웨거 링크
 [swagger](http://13.209.165.156:8080/swagger-ui/index.html#/)
